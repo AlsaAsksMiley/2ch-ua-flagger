@@ -935,6 +935,8 @@ jVyY0MISRlLyyX9qWsiCxyVUAwD3Yzld59QWVgAAAABJRU5ErkJggg=="
 
 log("Script loaded");
 var flagger2ch = new Flagger2ch();
-//flagger2ch.init();
-document.onload = function(){flagger2ch.init();};
-
+document.onreadystatechange = function() {
+    if(document.readyState === "complete") {
+        flagger2ch.init();
+    }
+};
