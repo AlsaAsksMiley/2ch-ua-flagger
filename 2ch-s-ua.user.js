@@ -138,6 +138,7 @@ Flagger2ch.prototype.attachDOMObserver = function() {
 
 Flagger2ch.prototype.installSwitch = function() {
   var switchButton = document.createElement("li");
+  var attachPoint = undefined;
   switchButton.setAttribute("id", "flagger-switch");
     try {
         attachPoint = document.querySelector("ul.de-panel-btns");
