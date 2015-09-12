@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.1
+// @version     v1.1.3
 // @grant       none
 // ==/UserScript==
 
@@ -121,12 +121,12 @@ Flagger2ch.prototype.patch_post = function(post) {
 
 Flagger2ch.prototype.attachDOMObserver = function() {
   var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-  var targetNode = document.querySelector(".thread");
+  var targetNode = document.querySelector(".thread").parentNode;
   var observer = new MutationObserver(function(mutations){
     mutations.forEach(function(mutation){
       if(mutation.type === "childList") {
         for(n = 0; n < mutation.addedNodes.length; n++) {
-          var classTest = /post\-wrapper/i.test(mutation.addedNodes.item(n).getAttribute("class"));
+          var classTest = /post/i.test(mutation.addedNodes.item(n).getAttribute("class"));
             if(classTest) {
               flagger2ch.patch_post(mutation.addedNodes.item(n).getElementsByClassName("post-details")[0]);
             }
@@ -935,6 +935,8 @@ jVyY0MISRlLyyX9qWsiCxyVUAwD3Yzld59QWVgAAAABJRU5ErkJggg=="
 
 log("Script loaded");
 var flagger2ch = new Flagger2ch();
-flagger2ch.init();
-
-
+document.onreadystatechange = function() {
+    if(document.readyState === "complete") {
+        flagger2ch.init();
+    }
+};
