@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>2ch-s-flagger | Github Pages</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+        <link href="//necolas.github.io/normalize.css/3.0.2/normalize.css" rel="stylesheet" type="text/css">
+        <link href="css/style.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div class="content-wrapper">
+            <div class="about">
+            <h1>Флаги сообщений</h1>
+            <p>Разнообразьте скучные <span class="text-strike">срачи</span> дискуссии на доске "Програмное обеспечение"! Благодаря этому юзерскрипту всегда можно мокнуть оппонента лицом в грязь, указав на его софтверные и сексуальные препочтения.</p>
+            </div>
+            <div>
+                <h2>Добавить новый флаг</h2>
+                <p>
+                    Загрузите изображение, напишите название и кодовое обозначение браузера/ОС.
+                    Полученный результат можно вставить в исходный код или предложить к добавлению в репозитории сценария.
+                </p>
+                <div class="toolbox">
+                    <ul class="pads">
+                        <li class="pad-title pad-active">ОС</li>
+                        <li class="pad-title">Браузер</li>
+                    </ul>
+                    <div class="pad-contents">
+                        <div class="pad-content pad-active">
+                            <input id="icon-input-os" type="file" accept="image/png" onchange="testInput(0)">
+                            <input type="button" value="Сброс" id="reset-os" onclick="resetForm(0)"><br>
+                            <span class="info">Отображаемое в заголовке сообщения имя, например, Microsoft Windows 7 или Debian Linux</span>
+                            <input id="os-name" placeholder="Название ОС" onchange="testInput(0)"><br>
+                            <span class="info">Ключ ОС</span>
+                            <input id="os-code" placeholder="Ключ ОС" onchange="testInput(0)"><br>
+                            <div id="os-preview" class="preview">
+                                <span>Результат:</span>
+                                <img height="16" title="os icon preview" src=""/>
+                                <span class="code-mono">
+                                    Flagger2ch = function() {<br>
+                                    this.os_list = { &hellip;
+                                </span>
+                                <input id="code-os">
+                                <span class="code-mono">
+                                    Flagger2ch.prototype.flags_data = {<br>
+                                    os: { &hellip;
+                                </span>
+                                <textarea id="os-base64"></textarea>
+                            </div>
+                        </div>
+                        <div class="pad-content">
+                            <input id="icon-input-br" type="file" accept="image/png" onchange="testInput(1)">
+                            <input type="button" value="Сброс" id="reset-br" onclick="resetForm(1)"><br>
+                            <span class="info">Отображаемое в заголовке сообщения имя, например, Firefox based или Safari</span>
+                            <input id="br-name" placeholder="Название браузера" onchange="testInput(1)"><br>
+                            <span class="info">Ключ браузера</span>
+                            <input id="br-code" placeholder="Ключ браузера" onchange="testInput(1)"><br>
+                            <div id="br-preview" class="preview">
+                                <span>Результат:</span>
+                                <img height="16" title="browser icon preview" src=""/>
+                                <span class="code-mono">
+                                    Flagger2ch = function() {<br>
+                                    &hellip;<br>
+                                    this.browser_list = { &hellip;
+                                </span>
+                                <input id="code-br">
+                                <span class="code-mono">
+                                    Flagger2ch.prototype.flags_data = {<br>
+                                    &hellip;<br>
+                                    browser: { &hellip;
+                                </span>
+                                <textarea id="br-base64"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/actions.js" type="text/javascript"></script>
+    </body>
+</html>
