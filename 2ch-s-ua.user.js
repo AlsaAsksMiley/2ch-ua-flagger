@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.1.2
+// @version     v1.1.3
 // @grant       none
 // ==/UserScript==
 
@@ -936,5 +936,5 @@ jVyY0MISRlLyyX9qWsiCxyVUAwD3Yzld59QWVgAAAABJRU5ErkJggg=="
 log("Script loaded");
 var flagger2ch = new Flagger2ch();
 //flagger2ch.init();
-document.onload = flagger2ch.init;
+document.onload = function(){flagger2ch.init();};
 
