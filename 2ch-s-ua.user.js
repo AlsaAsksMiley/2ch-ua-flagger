@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.0
+// @version     v1.0.1
 // @grant       none
 // ==/UserScript==
 
@@ -57,6 +57,7 @@ Flagger2ch = function() {
 Flagger2ch.prototype.init = function() {
   this.patch_posts();
   this.attachDOMObserver();
+  this.installSwitch();
   log("Flagger initialized");
 };
 
@@ -133,6 +134,38 @@ Flagger2ch.prototype.attachDOMObserver = function() {
   });
   observer.observe(targetNode, {childList: true});
   log("MutationObserver attached");
+};
+
+Flagger2ch.prototype.installSwitch = function() {
+  var switchButton = document.createElement("li");
+  switchButton.setAttribute("id", "flagger-switch");
+    try {
+        attachPoint = document.querySelector("ul.de-panel-btns");
+    } catch (e) {
+        switchPanel = document.createElement("div");
+        switchPanel.setAttribute("class", "ua-flagger-panel");
+        switchPanel.setAttribute("style",
+"position: fixed;\
+ right: 0;\
+ bottom: 0;\
+ height: 25px;\
+ z-index: 9999;\
+ background-color: #777;\
+ border-radius: 15px 0px 0px;");
+        aList = document.createElement("ul");
+        aList.setAttribute("class", "ua-flagger-btns");
+        aList.setAttribute("style",
+"display: inline-block;\
+ padding: 0px 0px 0px 2px;\
+ margin: 0px;\
+ height: 25px;");
+        switchPanel.appendChild(aList);
+        document.body.appendChild(switchPanel);
+        attachPoint = aList;
+    }
+    liButton = document.createElement("li");
+    liButton.appendChild(document.createTextNode("Test"));
+    attachPoint.insertBefore(liButton, attachPoint.firstChild);
 };
 
 Flagger2ch.prototype.flags_data = {
@@ -828,6 +861,10 @@ NqB4FXRuJIEHzWmGTqIybG8wy5beZwDyrmhzuZAUR1U9WbceRG8EuCCWSK7P9721\
 GEkcR8uJTnQ6wdnRR1ZMxQ03YwQK0IRIT0gZAZAhUD69Mx0fkaj+IsdKZwb86EXN\
 MwGZGloJyWqcA1i0SASD03mBO3b6IFKN+9XCVzTVeFc68B1L+a84AfvRgWpNxTaA\
 AAAAAElFTkSuQmCC"
+  },
+  tech: {
+      "ION":"",
+      "IOFF":""
   }
 };
 
