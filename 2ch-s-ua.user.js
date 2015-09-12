@@ -141,7 +141,7 @@ Flagger2ch.prototype.installSwitch = function() {
   var attachPoint = undefined;
   switchButton.setAttribute("id", "flagger-switch");
     try {
-        attachPoint = document.querySelector("ul.de-panel-btns");
+        attachPoint = document.querySelector("#de-panel-btns");
     } catch (e) {
         switchPanel = document.createElement("div");
         switchPanel.setAttribute("class", "ua-flagger-panel");
