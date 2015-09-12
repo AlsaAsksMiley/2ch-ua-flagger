@@ -5,68 +5,127 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.1.3
+// @version     v1.3
 // @grant       none
 // ==/UserScript==
 
 function log(content) {
-  console.log("[MessageFlagsUserscript]: " + content.toString());
+    console.log("[MessageFlagsUserscript]: " + content.toString());
 }
 
-Flagger2ch = function() {
-  this.os_list = {
-    "Microsoft Windows 95": "Windows9X",
-    "Microsoft Windows 98": "Windows9X",
-    "Microsoft Windows XP": "WindowsXP",
-    "Microsoft Windows Vista": "WindowsVista",
-    "Microsoft Windows 7": "Windows7",
-    "Microsoft Windows 8": "Windows8",
-    "Microsoft Windows 8.1": "Windows8",
-    "Microsoft Windows 10": "Windows10",
-    "Microsoft Windows Phone": "WindowsPhone",
-    "Linux": "GNULinux",
-    "Debian Linux": "DebianLinux",
-    "Ubuntu Linux": "UbuntuLinux",
-    "Arch Linux": "ArchLinux",
-    "Fedora Linux": "FedoraLinux",
-    "BSD": "FreeBSD",
-    "Apple Mac": "OSXMavericks",
-    "Apple GayPad": "IOS",
-    "Apple GayPhone": "IOS",
-    "Haiku": "Haiku",
-    "Google Android": "Android"
-  };
-  this.browser_list = {
-    "Firefox based": "Firefox",
-    "Iceweasel": "Iceweasel",
-    "Chromium based": "Chromium",
-    "New Opera": "OperaBlink",
-    "Old Opera": "OperaPresto",
-    "Vivaldi": "Vivaldi",
-    "GoogleChrome": "Google Chrome",
-    "Яндекс браузер": "YandexBrowser",
-    "Internet Explorer": "IEModern",
-    "Microsoft Edge": "MSEdge",
-    "Safari": "Safari",
-    "W3M": "W3M",
-    "Lynx": "Lynx",
-    "Web+": "WebPlus"
-  };
+Flagger2ch = function () {
+    this.os_list = {
+        "Microsoft Windows 95": "Windows9X",
+        "Microsoft Windows 98": "Windows9X",
+        "Microsoft Windows XP": "WindowsXP",
+        "Microsoft Windows Vista": "WindowsVista",
+        "Microsoft Windows 7": "Windows7",
+        "Microsoft Windows 8": "Windows8",
+        "Microsoft Windows 8.1": "Windows8",
+        "Microsoft Windows 10": "Windows10",
+        "Microsoft Windows Phone": "WindowsPhone",
+        "Linux": "GNULinux",
+        "Debian Linux": "DebianLinux",
+        "Ubuntu Linux": "UbuntuLinux",
+        "Arch Linux": "ArchLinux",
+        "Fedora Linux": "FedoraLinux",
+        "BSD": "FreeBSD",
+        "Apple Mac": "OSXMavericks",
+        "Apple GayPad": "IOS",
+        "Apple GayPhone": "IOS",
+        "Haiku": "Haiku",
+        "Google Android": "Android"
+    };
+    this.browser_list = {
+        "Firefox based": "Firefox",
+        "Iceweasel": "Iceweasel",
+        "Chromium based": "Chromium",
+        "New Opera": "OperaBlink",
+        "Old Opera": "OperaPresto",
+        "Vivaldi": "Vivaldi",
+        "GoogleChrome": "Google Chrome",
+        "Яндекс браузер": "YandexBrowser",
+        "Internet Explorer": "IEModern",
+        "Microsoft Edge": "MSEdge",
+        "Safari": "Safari",
+        "Mobile Safari": "Safari",
+        "W3M": "W3M",
+        "Lynx": "Lynx",
+        "Web+": "WebPlus"
+    };
+    this.showIcons = this.checkConfig();
+    this.cssData =
+            ".icons-inv {\n\
+display: none;}\n\
+\n\
+.ua-flagger-panel {\n\
+position: fixed;\n\
+right: 0;\n\
+bottom: 0;\n\
+height: 25px;\n\
+z-index: 9999;\n\
+background-color: #777;\n\
+border-radius: 10px 0px 0px;}\n\
+\n\
+.ua-flagger-btns {\n\
+display: inline-block;\n\
+padding: 0px 0px 0px 2px;\n\
+margin: 0px;\n\
+height: 25px;}\n\
+\n\
+#flagger-switch {\n\
+width: 25px !important;\n\
+height: 25px !important;\n\
+display: inline-block;\n\
+border: none !important;\n\
+list-style-position: inside;}\n\
+\n\
+.flagger-ua-a {\n\
+display: block;\n\
+border: none !important;\n\
+width: 25px !important;\n\
+height: 25px !important;\n\
+}\n\
+\n\
+#flagger-switch a, #flagger-switch a:hover {\n\
+background-image: url(\"data:image/png;base64,"
+            + this.flags_data.tech["ION"].replace(/\\/g, "")
+            + "\");}\
+\n\
+#flagger-switch.off a {\n\
+background-image: url(\"data:image/png;base64,"
+            + this.flags_data.tech["IOFF"].replace(/\\/g, "")
+            + "\");}\n\
+";
 };
 
-Flagger2ch.prototype.init = function() {
-  this.patch_posts();
-  this.attachDOMObserver();
-  this.installSwitch();
-  this.loadVisibility();
-  log("Flagger initialized");
+Flagger2ch.prototype.init = function () {
+    this.patch_posts();
+    this.attachDOMObserver();
+    this.installSwitch();
+    log("Flagger initialized");
+};
+
+Flagger2ch.prototype.checkConfig = function () {
+    if ((mt = document.cookie.match(/fl2ch\.disp\_fl\=(\d+)/i)) && (parseInt(mt[1]) == 0)) {
+        return false;
+    }
+    return true;
+};
+
+Flagger2ch.prototype.setConfig = function (state) {
+    if (/fl2ch\.disp\_fl\=\d+/i.test(document.cookie)) {
+        document.cookie = "fl2ch.disp_fl=\"\"; expires=" + new Date(0).toUTCString();
+    }
+    document.cookie = "fl2ch.disp_fl=" + (state ? "1" : "0") + "; path=/";
+    this.showIcons = state;
 };
 
 Flagger2ch.prototype.gen_image_node = function (type, value) {
     var img_node = document.createElement("img");
     img_node.setAttribute("hspace", "3");
     img_node.setAttribute("border", "0");
-    type = value !== "Неизвестно"?type:-1;
+    type = value !== "Неизвестно" ? type : -1;
     switch (type) {
         case 0:
             img_node.setAttribute("src", "data:image/png;base64," + this.flags_data.os[this.os_list[value]]);
@@ -82,147 +141,127 @@ Flagger2ch.prototype.gen_image_node = function (type, value) {
     return img_node;
 };
 
-Flagger2ch.prototype.patch_posts = function() {
-  var thread_posts = document.querySelectorAll(".post-details");
-  for (post=0; post < thread_posts.length; post++) {
-    this.patch_post(thread_posts.item(post));
-  }
+Flagger2ch.prototype.patch_posts = function () {
+    var thread_posts = document.querySelectorAll(".post-details");
+    for (post = 0; post < thread_posts.length; post++) {
+        this.patch_post(thread_posts.item(post));
+    }
 };
 
-Flagger2ch.prototype.patch_post = function(post) {
+Flagger2ch.prototype.patch_post = function (post) {
     try {
         v = post.querySelector(".ananimas span") || post.querySelector(".post-email span");
         flag_data = v.lastChild.nodeValue;
     } catch (e) {
         flag_data = undefined;
     }
-    if(flag_data) {
+    if (flag_data) {
         ua_data = flag_data.replace(/[\(\)]/ig, "").split(":", 2);
         //log("Found flag data: OS:" + ua_data[0].trim() + ", Browser:" + ua_data[1].trim());
         flags_node = document.createElement("span");
         flags_node.classList.add("post-icon");
         flags_node.classList.add("flagger-gen");
+        if (!this.showIcons) {
+            flags_node.classList.add("icons-inv");
+        }
         os_flag = this.gen_image_node(0, ua_data[0].trim());
         browser_flag = this.gen_image_node(1, ua_data[1].trim());
-        if(os_flag) flags_node.appendChild(os_flag);
-        if(browser_flag) flags_node.appendChild(browser_flag);
+        if (os_flag)
+            flags_node.appendChild(os_flag);
+        if (browser_flag)
+            flags_node.appendChild(browser_flag);
         anchor_span = post
-                      .querySelector(".posttime-reflink") ||
-                      post
-                      .querySelector(".posttime");
+                .querySelector(".posttime-reflink") ||
+                post
+                .querySelector(".posttime");
         post
-        .insertBefore(flags_node, anchor_span);
+                .insertBefore(flags_node, anchor_span);
         (post.querySelector(".ananimas") || post.querySelector(".post-email"))
                 .removeChild(
-                (post.querySelector(".ananimas") || post.querySelector(".post-email"))
-                .querySelector("span"));
+                        (post.querySelector(".ananimas") || post.querySelector(".post-email"))
+                        .querySelector("span"));
     }
 };
 
-Flagger2ch.prototype.attachDOMObserver = function() {
-  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-  var targetNode = document.querySelector(".thread").parentNode;
-  var observer = new MutationObserver(function(mutations){
-    mutations.forEach(function(mutation){
-      if(mutation.type === "childList") {
-        for(n = 0; n < mutation.addedNodes.length; n++) {
-          var classTest = /post/i.test(mutation.addedNodes.item(n).getAttribute("class"));
-            if(classTest) {
-              flagger2ch.patch_post(mutation.addedNodes.item(n).getElementsByClassName("post-details")[0]);
+Flagger2ch.prototype.attachDOMObserver = function () {
+    var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+    var targetNode = document.querySelector(".thread").parentNode;
+    var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            if (mutation.type === "childList") {
+                for (n = 0; n < mutation.addedNodes.length; n++) {
+                    //var classTest =/(post|post\-wrapper)/i.test(mutation.addedNodes.item(n).getAttribute("class"));
+                    var classTest;
+                    try {
+                        classTest = mutation.addedNodes.item(n).getElementsByClassName("post-details");
+                    } catch (e) {
+                        classTest = undefined;
+                    }
+                    if (classTest) {
+                        flagger2ch.patch_post(classTest[0]);
+                    }
+                }
             }
-          }
-      }
+        });
     });
-  });
-  observer.observe(targetNode, {childList: true});
-  log("MutationObserver attached");
+    observer.observe(targetNode, {childList: true, subtree: true});
+    log("MutationObserver attached");
 };
 
-Flagger2ch.prototype.installSwitch = function() {
-  var attachPoint = undefined;
-  if(document.querySelector("ul#de-panel-btns")) {
+Flagger2ch.prototype.installSwitch = function () {
+    styleData = document.createElement("style");
+    styleData.setAttribute("type", "text/css");
+    styleData.innerHTML = this.cssData;
+    document.head.appendChild(styleData);
+    var attachPoint = undefined;
+    if (document.querySelector("ul#de-panel-btns")) {
         attachPoint = document.querySelector("ul#de-panel-btns");
     } else {
         switchPanel = document.createElement("div");
         switchPanel.setAttribute("class", "ua-flagger-panel");
-        switchPanel.setAttribute("style",
-"position: fixed;\
- right: 0;\
- bottom: 0;\
- height: 25px;\
- z-index: 9999;\
- background-color: #777;\
- border-radius: 15px 0px 0px;");
+        //switchPanel.setAttribute("style", "");
         aList = document.createElement("ul");
         aList.setAttribute("class", "ua-flagger-btns");
-        aList.setAttribute("style",
-"display: inline-block;\
- padding: 0px 0px 0px 2px;\
- margin: 0px;\
- height: 25px;");
+        //aList.setAttribute("style", "");
         switchPanel.appendChild(aList);
         document.body.appendChild(switchPanel);
         attachPoint = aList;
     }
     var liButton = document.createElement("li");
     liButton.setAttribute("id", "flagger-switch");
-    liButton.setAttribute("style", "width: 25px !important; height: 25px !important; display: inline-block; border: none !important; list-style-position: inside;");
+    //liButton.setAttribute("style", "");
     liButton.appendChild(document.createElement("a"));
-    liButton.lastChild.classList.add("flagger-ua-visible");
+    liButton.lastChild.classList.add("flagger-ua-a");
     liButton.lastChild.classList.add("de-abtn");
-    liButton.lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+this.flags_data.tech["ION"].replace(/\\/g,"")+"\")");
-    if(attachPoint.firstChild)
+    if (!this.showIcons) {
+        liButton.setAttribute("class", "off");
+    }
+    //liButton.lastChild.setAttribute("style", "");
+    if (attachPoint.firstChild)
         attachPoint.insertBefore(liButton, attachPoint.firstChild);
     else
         attachPoint.appendChild(liButton);
-    
     liButton.addEventListener("click", flagger2ch.toggleVisibility);
 };
 
-Flagger2ch.prototype.loadVisibility = function() {
-    var mt;
-    var postList = document.querySelectorAll(".post-icon.flagger-gen");
-    if ((mt = document.cookie.match(/fl2ch\.disp\_fl\=(\d+)/i)) && (parseInt(mt[1])==0)) {
-        for (i = 0; i < postList.length; i++) {
-                    postList.item(i).setAttribute("style", "display: none");
-                }
-                document.querySelector("#flagger-switch").lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+flagger2ch.flags_data.tech["IOFF"].replace(/\\/g,"")+"\")");
-    }
-};
-
 Flagger2ch.prototype.toggleVisibility = function () {
-    var mt;
     var postList = document.querySelectorAll(".post-icon.flagger-gen");
-    if (mt = document.cookie.match(/fl2ch\.disp\_fl\=(\d+)/i)) {
-        switch (parseInt(mt[1])) {
-            case 0:
-                for (i = 0; i < postList.length; i++) {
-                    postList.item(i).setAttribute("style", "display: inline-block");
-                }
-                document.cookie = document.cookie.replace("fl2ch.disp_fl=0", "fl2ch.disp_fl=1");
-                document.querySelector("#flagger-switch").lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+flagger2ch.flags_data.tech["ION"].replace(/\\/g,"")+"\")");
-                break;
-            default:
-                for (i = 0; i < postList.length; i++) {
-                    postList.item(i).setAttribute("style", "display: none");
-                }
-                document.cookie = document.cookie.replace(/fl2ch\.disp\_fl\=(\d+)/i, "fl2ch.disp_fl=0");
-                document.querySelector("#flagger-switch").lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+flagger2ch.flags_data.tech["IOFF"].replace(/\\/g,"")+"\")");
-                break;
-        }
+    if (flagger2ch.showIcons) {
+        flagger2ch.setConfig(false);
+        document.querySelector("#flagger-switch").classList.add("off");
     } else {
-        for (i = 0; i < postList.length; i++) {
-            postList.item(i).setAttribute("style", "display: none");
-        }
-        document.cookie = "fl2ch.disp_fl=0;" + document.cookie;
-        document.querySelector("#flagger-switch").lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+flagger2ch.flags_data.tech["IOFF"].replace(/\\/g,"")+"\")");
+        flagger2ch.setConfig(true);
+        document.querySelector("#flagger-switch").classList.remove("off");
+    }
+    for (i = 0; i < postList.length; i++) {
+        flagger2ch.showIcons?postList.item(i).classList.remove("icons-inv"):postList.item(i).classList.add("icons-inv");
     }
 };
 
 Flagger2ch.prototype.flags_data = {
-  os: {
-      "Android":
-"iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAYAAAG6pMWvAAAAGXRFWHRTb2Z0d2Fy\
+    os: {
+        "Android":
+                "iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAYAAAG6pMWvAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAsJJREFUeNpiXLnJl4FZ/KUUy2+RN99+\
 /2XmBAggxnWnTSX+PpN8wfLtN8tzBtHX3wACiHHJKVOGv7/+HmYAAnXJD7YsDL9Y\
 GZiZWGyA/L+//7AwAAQQ48qTZgxAzbKc7D8fs/z+x9gElHH89YdlMwvDfyYjIMfm\
@@ -240,7 +279,7 @@ locjZ61SVbGTjf8PqYbNXGXwNmerbJ8P7l8VTNaZll06MDToxf7e6tvP+kLvgOP9\
 6p9xT0jspyvYKaE51OWIeXFRmANDWWN0Bz7ZM9BY6ia0ektGTnveTRB4320OuJvy\
 Yv0SBXjsLcK0c/wCjA4enraDEnoAAAAASUVORK5CYII=",
         "IOS":
-"iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAYAAAFRk36sAAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAYAAAFRk36sAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAqlJREFUeNpiYACClJSUbsba2trbKkAA\
 EEAMcNDQ0PAfSHECBBAziPPmzZv/pqamUUAV3ozMzMySJ0+efMbBwcHw9etXBoAA\
 gmuRkJAwY1ywcMHVf3//Mfr4+GiyPHzwUIuXl5dh//79DIzHjx//LygoyPDu3TsG\
@@ -258,7 +297,7 @@ YZArvn75ygU0lBfkAkYjI6PMpsamab///GYAJiV4MgIpBAGQ00HxAMKwtLd5y6b1\
 l5s3bz4GRsHWJ0+ePNIBgoiICE+gH7k6Ojrm7Ny5swuU8AE9EDRe3EOqBwAAAABJ\
 RU5ErkJggg==",
         "Haiku":
-"iVBORw0KGgoAAAANSUhEUgAAACYAAAAQCAYAAAENGT2IAAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAACYAAAAQCAYAAAENGT2IAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABfdJREFUeNpi0PJgZQABblUOMC2oySnG\
 5FkhfgnEsahW/B+2Vv0/H/e/AoAAAstqxIgzQAETKxcTE6O0EYepQZniqX+//zPI\
 S/1lmOF8mxEggBhBZl7b8Ruu4/HJjwzibiJ5Ijp8EwV4GBiEeP4yrAi86cPIgATM\
@@ -293,7 +332,7 @@ BcJJ5VTmqvUwM2qNWxGqCRKSH1LOFoP5XL0aTSkkfoyGgHNSmrfr757Wv37LtV/g\
 b54hVsnuRlcwJpzdGT4EMZFJPWkM1gYD3LbQqnGR6xj/cAKRwLtCKDHFWsb6ReST\
 v/rExe39l+/kJkLkFf/78A9d2xGwa8PhvQAAAABJRU5ErkJggg==",
         "Windows9X":
-"iVBORw0KGgoAAAANSUhEUgAAABMAAAAQCAYAAAGDw3T0AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABMAAAAQCAYAAAGDw3T0AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABMhJREFUeNpirqurY2BjY2P48+fPCQZp\
 aelUJgaGjy93Mf0HCCAGJiYmBl4+/lssikpKmxgt81QBAojh+8JMp9+9LvMZGBi+\
 L/eV/h881/4/S7doifgLdsafDAxKf9OvyTAkch9mAAggBpCpIGBmZlYOpJ5kZWWZ\
@@ -322,7 +361,7 @@ yYnOXiRpVbFNN+rfh1Sl7aAxTX+8dR5Wc+/g/4Ojxj/VDRGcTmQgwgiEQqFILBaT\
 s9nsKXLPrRQKp8MjIy94ng/6fD6e47gFWZa3iDYFQQACI7AsC16vF9rtNlg9arXa\
 nr+8IuPqgdsVdAAAAABJRU5ErkJggg==",
         "WindowsXP":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABBBJREFUeNpi/P//PwMIsOzd94Hhx//W\
 UIAAYoSLlE1l+C9lq/oLIICY39w4x9Bh9Pq/vao+n3bf+52MyQ0/Dr158c0qUV2I\
 2VSdgQEggOB64ODTipqc9xEM/wPqGf5Xn2T4z9Twrnmyzavn32X12P4K305MZmie\
@@ -347,7 +386,7 @@ iV4dFFr5VD8Ex7fFaophtPD0W9zcGDt5xTvXSUfDVwesAG9kYDIaFFaiMkJ2dY7b\
 96BYLMsqEAtvBWRzNWxG6tDrObDaDD4sPkajvoMXM49YurPhL4rBQTXDNxsyH3Gd\
 mAidHLkk/9f9L2yNwn+iFKd3AAAAAElFTkSuQmCC",
         "WindowsVista":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABAhJREFUeNpi/vPkOoPwr/cCTObB6Qz/\
 pdk8AAKI+Xx5VNB7NanrTOsdWtf+E/6wDiAAACIA3f8DmndqAJBJ9v/7Cwv+Q4Mq\
 wQEdYI2/4/78+/1zuUX41+cAAgBEALv/A/3o3AA6y7qX8DYstT9NNQAAt2FDm+er\
@@ -372,7 +411,7 @@ TeQmY3cejrIRVnoLN6n0HRgs9EEtgdQZYpPa/YVk4dM6BWKjDlNfU//h1RGITJz2\
 nbx0ClehGDAaFljbVDexWHJr/ZeTOxWlkV4vwH8U6LR1yz4S0XQYy3n9u9o003/n\
 vwHCJq3KswmSWwAAAABJRU5ErkJggg==",
         "Windows7":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/ZJREFUeNpi+P//P8PF6/cWsKzfe2HB\
 kUPz4gECiAEoIgvETAyaC2/91/GI+w8QQIwgkcOzpj1iFWJiuMAkwsDEwMDwLHHD\
 W4Y/z2YwVE+5zgAQQCA9DLfvP219/e5jJIjNMnnx9v8RnOcYNjBqMzD+4ytjUHEq\
@@ -397,7 +436,7 @@ ly5nn9/48LUQ8nvJ7v8ZFgVpm0y7MNx+dp1H6sBw497Vqey+xMAdNqL9b2M3GGsk\
 t+vN4ys/1fGCqg92nYoNBEqHknJeifjfsnqdpdtb+AfYxLpB4fozegAAAABJRU5E\
 rkJggg==",
         "Windows8":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAflJREFUeNpivmPHwPCjU0SIkWP2xr7L\
 bJncAAHEDBL50yrczqQTu3Fm5l9eIYAAYgSKvGVgYBDqzBJhYP3zn4GRYf6O70AB\
 jgdMSQzfGdgYAAIIpAIM+tKEXYFUMwuQ+M/4n2EDkA4ASYCMnwmkLpxmyzMACbD8\
@@ -411,7 +450,7 @@ wXdGhgW7f4ICA1UcrGHnaobWJeaMNxd/R5dG8gILw/+/XxDJEcWA78DM8fsftvSB\
 FIigMDgLxI9BGtAkudDSGc54dsMUZgRK/GbgYvwJTMCMW4ACYkAsA8Sg6FWGYgUg\
 5gQAHYqE3owvZdUAAAAASUVORK5CYII=",
         "Windows10":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAt9JREFUeNpirLn6neHP//8MLGuf/t4k\
 w8nIABBAjKWXvzG8/PFfk+XQmz87GRkY3gMEECPj2vdv/zMwCDEACQagCNP/fwx8\
 YA4UAAQQWI+xADPD+Q9/Gc5++JvNwLD2/f+iS996QDQIs8hyMu0SZWe8JsbOuIqf\
@@ -430,7 +469,7 @@ hWzivWQFNRqqlC/+49wzCCiJDjvxcT93m9LQOkivgvhiorkNMfFw9ARdCS795iRO\
 eorAAN4BH6piMHCo3pmL6CGxNMBz8b4NCzynJpp3kIeV15w37qTtfgKOjExLF79A\
 AwAAAABJRU5ErkJggg==",
         "WindowsPhone":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAkRJREFUeNpifMEswsAoLc3KwsjHl8fw\
 +QsHQAAxvlQ0YGD49aeA5f+Hz2UMQAAQQIwvBJXfAmkhBihgYmBkZGVAAgABxPhC\
 RImBVU2d4c+tuyr///6ZycLwl/H/7+s3tgIVezMwMjGwAFWVM/xnusfAyHAIZuh/\
@@ -446,7 +485,7 @@ dbzYbW017OlX2Kx1V/X2YPhetIqopqGfdNuKbHSjAZf+3wya/Gvq+hkqqcBTk7jE\
 NoTC80qq949esztk7GRBiX8C7xLsL1ja1H52K/MMvKjBGG9OV9EAAAAASUVORK5C\
 YII=",
         "GNULinux":
-"iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAYAAAFRk36sAAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAYAAAFRk36sAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAnpJREFUeNpiYAACTk7ODBDN8B8IAAKI\
 AQ6+ffv2H0hpAQQQmMPCxOjoZ8fzH8y5MottpreT4v/vP4EarileAAggmI47cL3/\
 rzH+h7EVQMYKCwv/Z/h/yxzE/n+wn+E/QADBlbKysoRraBr819HR/c+ADry9va+/\
@@ -463,7 +502,7 @@ YGAA1rRx0y4GppvhDL4hAgwMf4QYGJg5Gb6/frqVkZudQV1ZgsHOWI3BNNCe0ZKb\
 5T9PWh/D4ruvGG5AnSbWFc8QY2/EKNe67P+sTScZpgDFXgIAa/MXvMc4nW4AAAAA\
 SUVORK5CYII=",
         "DebianLinux":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/RJREFUeNpi+P//P8NDk+yZTAxA8P/1\
 x3SAAGJ85NDKwPj+KQMTx7ePDD++/F0LEECMIDWvtDIYfkiKpv158sKIBaT2y1vW\
 bi5TvlLGP8wMAAEARAC7/wDuCy0A4jd0eORgkyj/AAAAAdobY7vy59FFFjtFCwYO\
@@ -488,7 +527,7 @@ ewBzg80oH+8NG99VfyaVJymkI45odIZ7QOfLgCce8Fl6yx5HwP2hBAPkOKYpCq9y\
 1EWsq19zLMwElf5KRmrPGB0Fim+hrgWVgOfgdMC/TCup1Pu6+FkAAAAASUVORK5C\
 YII=",
         "UbuntuLinux":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAzNJREFUeNpivOshwgAED5n+ff/6GMiQ\
 AwggRqCIBpBxg/H7lRP/v+xbzQAQQAxAEdVHyRb///349v+2A+d/JqD07V/3rzJ8\
 ObiegZGJmQEggBihphyC4hqQlv9fT+35/3Hbwv9A9h9GoPH/7/lJMzAys4BUMjDd\
@@ -509,7 +548,7 @@ zExKmV1OXUEYSmO+rynWIENwEy40R9dKPfeM72wa9A9VjqR19SEfPLFj6F4/Kg8J\
 Lk62bq1kt7EdQUKEMEPoZ6cIBUh5S8qfqR9mi38T3DSScC2L7AAAAABJRU5ErkJg\
 gg==",
         "ArchLinux":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAnlJREFUeNpiYAACLn0nJxDNIDbr7n+A\
 AGKAA7fp+6+yCYmLAgQQXEB7/s3/cI7ETAhHbMLZNwABxIAVKJct2MwhKCoMF5Cd\
 dvm/+LSrYG1MYn0n376ekefFxM7FwMjKwQwQQChamXgEBVTnXP+NLMYIl2RlY3Zd\
@@ -526,7 +565,7 @@ Yu6D/+KTL/0HJUcOI3d/mByrspGZxIwb/8WnXv4nPvXKG76I2k4GRkZGuAv4Iusm\
 ZmTn4Pl19fAuRr7w6oZfd86d/XF2+2ZSYoldz9GVXdvWHgBzC9vbXVrvxgAAAABJ\
 RU5ErkJggg==",
         "FedoraLinux":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3tJREFUeNpi1HQsYgCClwyaDoXv/gMB\
 QAAxAkUsgCInGO6+/PHfNH7ef4AAYgCKmALx/xPnb/+3ztn4n1lMxfbyp09fOJ+/\
 +sDw4NpFBoAAYoSacuHX7z/H2FhZspiAnP9Guor6v37+zmRkZPrHYBI3F2T6/2tP\
@@ -548,7 +587,7 @@ S4Cj7XK5nHA4DKgPD1Bil9Y7kdmV4nmxBq4GGYV0DLnoFS74KhzS1EXRibHhPpzT\
 Q2edb9zUP/NsjOS+OW/ohuipdqOlyYv3XAHxpzSqeI7BoFRJop0SNkxDPxGoYkkO\
 4iN6iW/fTlSGNUJ0lQAAAABJRU5ErkJggg==",
         "FreeBSD":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4BJREFUeNpiYAACGRkZIRDNu5SB4T9A\
 ADHAwXNVxv9FQBGAAAJz/v/5+f/LiV3/twOZLCCBA3wCDHLqPxl4J1R/BAggZiBf\
 EAj+/v///9/fv38FGO4ePvTrz63j/5+vXPhfUkzMjvGOPPP/nw//MtwBKn3fV32W\
@@ -570,7 +609,7 @@ PzGwCTAxMAIj7PUfoNzX/wy/QSkLaCi3wD8GKSMHhjWiVjeSWzocGP79e4kSVZKy\
 sn6tHm63TirJ/78ryvX/tizH//c67P9/enH//9Ks8X9ueeh1YVFxT2Q9jAy4Ach7\
 PFD2ZwaUfI8AAKFcdGnejqM9AAAAAElFTkSuQmCC",
         "OSXMavericks":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2dJREFUeNpi+P//P8P3799vMLx58+aG\
 U1ndf4AAYvjx44fkt2/fGFi+fPnyjAEIAAKI4fPnz5LXn93//+PbNyD+/p/l0KFD\
 z+9+YGAIcWRnYGdjZQAIIIbfv3+DTFkPxCUgExk+ffr0/8qju//dO0r+A9k/GIHG\
@@ -591,10 +630,10 @@ pmkxCmyeoMGBkmnB9OYxDPeFYWN2AmKTI7A0Pgpjywl40d9BFMADkyJYKBRWBFVV\
 +Q+LRCKpUCg0b1VrEPBL3v60msTawKraEJDbQdf1DMk4Q7hPRlV4gYbP51vI5/NA\
 34FgMBhVFGVIluVu3iop9VYxK1kCJs0P8wlpJ2lZvcLf49k7NaXQhpYAAAAASUVO\
 RK5CYII="
-  },
-  browser: {
-    "Firefox":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+    },
+    browser: {
+        "Firefox":
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABAlJREFUeNpiYACCwkWnvzAd9BH7+Ovl\
 NW6AAGLgkipUZGBQYWBYq8jwPzUx/j9AADGIcjFpPivk+59x6Pp/t659/xmBethu\
 Z4v9/MgkzKBs95gBIICYQab4Ne++8pfZQurdvW37GF9US/7f9d+d4bBtPsMsHhcG\
@@ -618,8 +657,8 @@ w1h0CyiQeCX1rxJ2i8j7IcfiyZibMf00TKuFtiBMl1xI5aLYkEJoKVmcD1cwP14H\
 E/oBdnICQn1Fiw4XE8Rf6CKXKCxe9tv6VZYBnBqYQx7YvSRcjHUYBah6E55wDZ2T\
 JO7eMspXUmbSyqUJ/K+jFsdzMadtfNBhD/pA0KSFQp012nnaFJ8W9XdrknbH8r3/\
 F/gNf0qApDnMDOAAAAAASUVORK5CYII=",
-    "Iceweasel":
-"iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAGXRFWHRTb2Z0d2Fy\
+        "Iceweasel":
+                "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA8JJREFUeNpiYACCBesOHGYxNZ11//FZ\
 YQWAAAIJMBg4hMWw+Ngf/P/oASsDQAAxgkR6W6/8l9T4z+DsIM/AJCgjrh+eLsvw\
 9ycvw8Tp978BBBADDCzYdOoyNxcnA8OzV9//79j8+P//f//+c3HzMjC1dR5m+P2b\
@@ -641,8 +680,8 @@ z6+8jIz8V+//+vLwGMvXv3vX8PNnJEtr/2TQdv/H4GQgzyDExcWwat1Dhqf3gbZ+\
 Z2JgZeViYGJkYvjz6y8Dr9hfhqcv7x5g+McCCW9VQ7+a1Mgn/5fPe/d/6fI7/2/d\
 e/UfGTx9+/X/mo3P/q/d+ul/85QVa0CaREVFGJCjillWTS8twCcn1dXRVVtKTIjt\
 5dt3DOeu3Xi//9i6fRdP75n59vH93TDFoPQMAHklqCYxF7qPAAAAAElFTkSuQmCC",
-    "OperaPresto":
-"iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAGXRFWHRTb2Z0d2Fy\
+        "OperaPresto":
+                "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA8BJREFUeNpi/HfnOQPjr/c7GI442Lz6\
 //8/E0AAMfz/8MHs3/pVDAw73JxPzRLg+w8QQAx/1622OGlv9xMozfDa2+s/Q6EA\
 P8tcFtb/IIF5XLz/AQKI8e/DpwxMv39u+f/rR9f/aycOMfytKAfLHtTX/XY1MiSQ\
@@ -664,8 +703,8 @@ rug/LMtO9wdzQRQh9H2kdMNgUaTBMMQYrJgQTHm+8W/PBXQDRsy7H/B9suzdh5sH\
 PdiOi25vBK/Vnh/Wamcmb5bsUb1eUDv2+cRFShGSNluhX6YDz/vwW0YLQ2LdadLR\
 dwfm6u1b7/ivn0XwUKj2+um1pQfv13f3MqQR/jLufpP+ZU+KlxNf/ydD7OQ80dIF\
 0m5MCZFjSpgeMd/Vjd4fIT81ePTEB9qT+0N3etEwZVJ4mAAAAABJRU5ErkJggg==",
-    "GoogleChrome":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+        "GoogleChrome":
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABBZJREFUeNpi+P//P8PnjMifLN6rfX9/\
 kcphAQgghhJ/P4t7T58yMGzdOOn//xsM/wECACIA3f8AYXxlNeUiJ//yl47/7n4X\
 /wHPys4Af/J9/+33+ADEIssAAgBEALv/APL19QDZU0nfmzkznf79/QAB0ywp/x0p\
@@ -689,8 +728,8 @@ KPNhvuM59Ny084sIHrJ/vEK1UiLO3Mo5PS/xtcWHuZLfaNyVWP+wC5euOHzy5NWN\
 eLVCOwIlNPzdKRLrsaHLLLIZRsvVVqN6qHa1qr2qm0ESSBJRGEyboUakMF0RJWFJ\
 Y5O0UPBoYe/lu1jXrRdra6Zj4//Te7cXh+5s05kr/v5vRz/amtVsoA+/kLZ5/ON2\
 JhTL1z8dHV/eqvR7T2v+AbCooSre7dBxAAAAAElFTkSuQmCC",
-    "OperaBlink":
-"iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAGXRFWHRTb2Z0d2Fy\
+        "OperaBlink":
+                "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA6BJREFUeNpivGVlz6BspPuKhZGJ8e2D\
 S9eFAQKI8Wdunvub+492Mj6wdnjLwcQoBBBAjPd9/E2EOTlOP/n0mVGel/s/y8nr\
 N86Yc3IxfP32neE1BwcDQAAARAC7/wHoUlUAFRkX2fwFBYbjztGhBA4CAP/X3+IB\
@@ -711,9 +750,9 @@ FJd/w4RuBcrzoNftAlqb6qo+o7sNaRfuempN3CTp1Jeyp+28DJa8tD1FAEAK8uXY\
 XcMYKHU9n3EKq7I2IsyLt0FVj4ULxi0j9hTwZwS/1mkOCeVEP+qRYrjh8rL3CieA\
 H8Uky75dIT59IuVxx9qemdPDfq7Nq7yqxg0plj3O9w1i4FYZF+aX0Vuzqhyxgl77\
 b/SP07JYvEQWcCZeR9aeVtZ8GXjeNQc4ibT2BRc7MZcrkRCc2EeMOG4BudKfHxDh\
-D1UAAAAASUVORK5CYII=",  
-    "Vivaldi":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+D1UAAAAASUVORK5CYII=",
+        "Vivaldi":
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2lJREFUeNpi+P//P8Mvf/+3DO8tzN9+\
 v3L5P0AAMX739Hr7789fBoYfly79P6mt/R8ggBjeW1u8/Q1U+Dci4v8/IM3y/+9/\
 hq/W1gz8R48y3Dc1ZQAIIMZPTk5vOXh4GIDSDGybNwkzsa9ZI8T0978QIyen0ClT\
@@ -734,8 +773,8 @@ tqVVXKRJ3SS8GcAhu1ymQUIv+y2PWb0vlSC7z0iaEcSV74Z4lYsJMgmpbNhqYVwo\
 6MyGP62PTgd3uS0Yj10kKK5NUZVNCiSCvxWNQrz0MN7ZRri7h36vj2GthlSUqOwl\
 yTTOGEsx56dtVNXPZkf4p6SOg4BLZ3zOWkJqd9Pt9rLqfwOfwXFY6uCaVwAAAABJ\
 RU5ErkJggg==",
-    "YandexBrowser":
-"iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAGXRFWHRTb2Z0d2Fy\
+        "YandexBrowser":
+                "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA1NJREFUeNpi+P//P8P3798/Mj169Oge\
 x8+ffAABxPDr169okCjDfx6O/69evXoGEEAM/6ZPLfg/Z/b//9zs/38XF/xnAEn/\
 dbT99+njx9+fP3/+DxBAYAGgvg/f/v1LhOgV5v//v6fr/39B3v+f7t1LZfj39+//\
@@ -755,8 +794,8 @@ rkuSxNymrl/rqtriu3scpBxAh1RiWQDhMMDmFuB+EsyubjA1jZuc1wiLJ8uyFIL6\
 2R2NRheasnzTbDZrWjBgQGQAaG8A6nWAQh5YpwO6YegkmjcAePT5fEGiwh+LxSZ/\
 VEXtJHLl8ou8uuK0L2YdGUY1J7GWaZaJhRaxwRVFWaOf/0ry2yyxe2fpcRwazBKA\
 Bs7GM2bxdZTa/Rf7BaMMlSlrMZt+AAAAAElFTkSuQmCC",
-    "Chromium":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+        "Chromium":
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA9ZJREFUeNpiYACCmOZ1b1mKF57/9Osb\
 Ay9AADFwC4jKgkQZ5u++8f/yk0//AQKIUURaSV07tPaGg5Eyw+cf/xgYQbKNG+/9\
 //XnP4OfoTADQAAxgwT8C6acFpZU0H984/Q2RqfiJf+FeFkZpCXEGPh5uRiY3F3s\
@@ -779,8 +818,8 @@ gkZWkI2BmxUYDkDbfwL9oSDKycDPyQIMC1DY/Gf4wcDGUJMdlwxNrkwc7pm9awxd\
 I73///4KDMj/QIOAtgCdyAr0hYuOIAMLEyMDMPUw/GflZTh5/OjN5qxg90/vXj9E\
 iUYQEJRWtdR2CM+Q1rSwF5WQENWSF2D6/OHDh5uXT585vHnp3Nvnj2wGKvsLUw8A\
 AZZoEtNTqkYAAAAASUVORK5CYII=",
-    "IEModern":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+        "IEModern":
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA9RJREFUeNpiuPflF8OCB58YmE6++8mQ\
 cPLlf4AAYph0+wODyIZ78xgZVt/5z/DvPwNAADEef/Odwf3w8w+8rExXnn7/Y80U\
 dPzF/k8///IzMDCwAzEDQAAxPvz6i2Ha3c8MP/7+V2Vg/M/NcvPzH7HO6+9egmSd\
@@ -803,8 +842,8 @@ Mlwst0EuuPflTwAwwa38/ecfG0iei535xwoLcVlGwQ33TtmKckyIl+db9vXvf5WK\
 i2/WP/v2RwfsGnAYIgUiKLcAnZKlLlBZqSHQAUoUjIdef2etvvIu7dm33zxSnKzP\
 5blZ7ijzsJ4B+lUVmFps7n3+LcPNwvRVX4D9shw3ywFpTpavwDTBoMjNAg4XAOlX\
 s9jxK7nNAAAAAElFTkSuQmCC",
-    "MSEdge":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+        "MSEdge":
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAtFJREFUeNpi1C3excDCwvSaiZmBmQEI\
 RAACiNGwdI/cP8b/j1gYmBgeMjEwMgAEEKNe2U42JgYmJkZGxh9AJf9ZmP4y/WJk\
 YfwP5HQC8T2AAGLUA5rCzMJ0huE/w3mgjlQmIOf7/5/M9v//Mz78/5/hFAtQJoWR\
@@ -821,8 +860,8 @@ ZqxTytcIPgKnJIo3I4SwIPiTfQe+xz8QivyTModazAsEnOQr1ComJTihq2vRycND\
 dYKnv8aBZH+O/N2m+KrJhbZYYnxLq3QlB/L/0ps0r+RrG0j7sLELShsA1oyjh4qu\
 Cdy54l+V2A7GG55UQZFSwmO3tm1OT8sij/i92XEexvD49H4O9bqot1Jfuj0wXiYr\
 L4dZbBrWOuSFSEXa5ShfohIXeSf3FfqWmrMF26fqPqOWptkAAAAASUVORK5CYII=",
-    "Safari":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+        "Safari":
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA6ZJREFUeNpiYAACEzPzcIaoyIjybb7+\
 /wECiAEGGDXSVv330JNgAAggMG/BulP/L918/n/64k3/WcACTBIM/zl5GD6JqzAA\
 BBBYBQsLCytcc0xs7IxtB679P75g5X8Qn5lLL3WzkIY6w19xWQY9FYk6pngLhmec\
@@ -844,8 +883,8 @@ EIOogjCDr8B7hotMAgxyKvIMr4De/MLCwvAMmKk+M3Ew5BkzMpw/tGPC2nXru+CB\
 qKSk5NDb3b2dRcuK4/H3nwxMQoIM2gKcDOxAFbeAqeLd978Mcr++MLDeOfO3rLw8\
 8Oq1a5vRYwEWhdwWZmYhTk6OPipq6opMwAR6987tR/sP7N927PiJVb9///6ErB4A\
 5QFktlkCLt4AAAAASUVORK5CYII=",
-    "W3M":
-"iVBORw0KGgoAAAANSUhEUgAAABYAAAAQCAYAAAFl6r+wAAAAGXRFWHRTb2Z0d2Fy\
+        "W3M":
+                "iVBORw0KGgoAAAANSUhEUgAAABYAAAAQCAYAAAFl6r+wAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABVZJREFUeNpiZAACc4vsND5ezlkMjo6O\
 SauPP/9vENb1HyCAGP7//8+QXbXkFkgFs76+wX83W3VhOXl5W4AAAgkwbN99YdG6\
 rfv+7z9+8X9I1ar/DDDAwszCqxU2+X/dwpP/D528+Z+FhYUBIIDAZoFwevnCB5aW\
@@ -876,8 +915,8 @@ gkFbDll+EzIRBxmeHJ/GP6e9s+O3aXrxJUlKm1lewdGoHkIpEkjO17fffEScNBk3\
 Y3EUq5TIZnNIJFKor1aiq1mHqmMyEBwOlhaW6GDA+3hwcOCtx+P1H5L8j/jPPzho\
 UKKUH28zX+ooUpRoU/u5QoaJCulV324mtbWiqyxdUavLQkwg6He5XJ50Or1zlOA3\
 Qic1LOi2YhkAAAAASUVORK5CYII=",
-    "Lynx":
-"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+        "Lynx":
+                "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4RJREFUeNpiYGBg8GCAgRXNcf8BAoiB\
 mZkJzGGZGKfz/8XzZwwAAQTmLS60/++gxDJnca75f7AAPztDREes0f9Ti6r+AwQQ\
 3IAkT30QZQMyQXdNY9h/eQHGJ0LcrBtBApdfvP3EIC/ILn1mwyQhsB0ibD8ZGHhE\
@@ -898,8 +937,8 @@ mEvky5dvDHYOjgy79h5ikNa2ZmD69JDh3LF9DKYWVkBX8DN8+fqN4clHhrtMyAZ8\
 +fHnYe/6Sw6/gFH0hl2RYfvRywzcmq4MDy8dZnjHJM7glVjOICwkxPD3718GCT1X\
 hjsvv3xhRgtEhm+//r8XEeLns1DgUPzPxPqdmYP3m7Cs+jdBYeFvX1hEv31jFfr2\
 8dWzz+kNM7ZvOXqtAgBYESruCNekTwAAAABJRU5ErkJggg==",
-    "WebPlus":
-"iVBORw0KGgoAAAANSUhEUgAAACMAAAAQCAYAAAHrMPbMAAAAGXRFWHRTb2Z0d2Fy\
+        "WebPlus":
+                "iVBORw0KGgoAAAANSUhEUgAAACMAAAAQCAYAAAHrMPbMAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAe5JREFUeNpibGpqOsPAwDALisGACYhN\
 gHgmEP+HCQIEECNQJYwtCMTvQareQVW8B9EAAQRToQTEd4F4D1SlCVQXSCEjE5QD\
 UiAExC4MWABAAIFMAquG6UKiGZBdCQN7GHAAkKJ7QBwKxK4w09EVsQCxMpIVZ5Ac\
@@ -912,31 +951,33 @@ NqB4FXRuJIEHzWmGTqIybG8wy5beZwDyrmhzuZAUR1U9WbceRG8EuCCWSK7P9721\
 GEkcR8uJTnQ6wdnRR1ZMxQ03YwQK0IRIT0gZAZAhUD69Mx0fkaj+IsdKZwb86EXN\
 MwGZGloJyWqcA1i0SASD03mBO3b6IFKN+9XCVzTVeFc68B1L+a84AfvRgWpNxTaA\
 AAAAAElFTkSuQmCC"
-  },
-  tech: {
-      "ION":
+    },
+    tech: {
+        "ION":
 "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAAGz7rX1AAAAGXRFWHRTb2Z0d2Fy\
-ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAO5JREFUeNpi/P//PwMyYGJAA8gC/9EF\
-GEEEQAAxIpvBBFMGopnQDWKE6QMIIGQ9/5EkwGwmLBJw2zAciOw2gABiRPcOTm8N\
-CgmAAMLl3P+41IMIFiyKGdFCCsMgJiwaCAImBuIBI7bkgQ/8J+QnfBrBmgACCGdk\
-4wIsJAQ12AJcQY3TPyQHMxMt44SsSCRJw39cwUpSbON0Cjl+wHDSf1KSBiOx1gAE\
-qKUMbgCAQRBYE/ZfmS5QjRDK04cQzlY+PkdKs6pqY0K1li4UgsvXpx43sB7gL/Au\
-cHa/2zEh1zRDOPWTJ8IVSUyYNIaSyNUFc6Y3ahgCm+gAAAAASUVORK5CYII=",
-      "IOFF":
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQ1JREFUeNpi/P//PwMyYILS/6GYgQUq\
+wIiuAg4AAogR2QwWmD4YB7s+gABC1vMf3TwmHBIMWN2DrBgggBjRvYOuC6ddGACX\
+xH8WZO24JJDtYkR3MlwXQADhdC4uk/B5BS9gwhFqeG1E9ylG4OELaYIKsYUQum2M\
+uAIBBAACiNjQIxil6E76j80v/0mx4T+xQczEQCIgWwOxMY81AvFGJguRsY3VD4wE\
+QotgKP1HYzMS8gMjtrREyA8YfgII0FsV5AAAgqDh+v+X6e6WilmeHaAwlcPXqSX2\
+VxXhRDI5EsOn8aJMCWF3taam/YfxsunRpebkdKaqEvxgRoIk1iyAlyIcEcEBenBc\
+Hd9AxLF3A5g/QXMRQYn9AAAAAElFTkSuQmCC",
+        "IOFF":
 "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAAGz7rX1AAAAGXRFWHRTb2Z0d2Fy\
-ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAOpJREFUeNpi/P//PwMyYGJAA4QFAAKI\
-EdkMkCyM958JXR8jTAtAACHr+Y8kAWYzYZFggLExrEdSzAAQQIzo3sHp6EEhARBA\
-uJz7H5d6EMGCRTEjWkhhGMSERQNBwMRAPGCE2Uaspv+E/IRPI1gTQADhjGxcgIWE\
-oAZbgCuocfqH5GBmomWckBWJJEcg0RpITiJwTaRo+I8ecf9JSRqMxFoDEGAkJz5y\
-AAsp0UAiYCTGkv+kBgsuR7FQ0XCikzrVLSArAw60JcihwIirsKIUIBv8n5zShKTs\
-jVyY0MISRlLyyX9qWsiCxyVUAwD3Yzld59QWVgAAAABJRU5ErkJggg=="
-  }
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAR1JREFUeNpi/P//PwMyYILS/6GYgQUq\
+wIiuAg4AAogR2QwWmD6YUkaYXmR9jAABhKznP7p5TDgkGLC6B6oQzAcIIEZ076Dr\
+wmkXBsAl8R/FH0g0hlGMMPuYsDgZzAYIIJzORbcTWRMLvtAh5BtGItWjRD2KZ7D4\
+HmtI41P4n1CaQrftP1JCgosDBBCxoUcwStGd9h+bX/6TYsN/YoOYiYFEQLYGYmMe\
+awTijXUWImKbEZnNRES6+o+skeqhhJGemAj4ASPrAgQYyYmPHMBConpiXcSIyxJq\
+euk/3kqDFoCJUNlEoW8YiEkpAxLxJEc6vpL6PzV9x0Sqq/CVx1j4eIMLoyAh4Ij/\
++BzFRIIB+HzCiOYwygpfXBkOi8PgcgAWCEVu1YMrAQAAAABJRU5ErkJggg=="
+    }
 };
 
 log("Script loaded");
 var flagger2ch = new Flagger2ch();
-document.onreadystatechange = function() {
-    if(document.readyState === "complete") {
+document.onreadystatechange = function () {
+    if (document.readyState === "complete") {
         flagger2ch.init();
     }
 };
