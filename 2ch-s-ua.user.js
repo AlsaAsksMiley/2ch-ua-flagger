@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.0
+// @version     v1.1
 // @grant       none
 // ==/UserScript==
 
@@ -57,6 +57,8 @@ Flagger2ch = function() {
 Flagger2ch.prototype.init = function() {
   this.patch_posts();
   this.attachDOMObserver();
+  this.installSwitch();
+  this.loadVisibility();
   log("Flagger initialized");
 };
 
@@ -98,7 +100,8 @@ Flagger2ch.prototype.patch_post = function(post) {
         ua_data = flag_data.replace(/[\(\)]/ig, "").split(":", 2);
         //log("Found flag data: OS:" + ua_data[0].trim() + ", Browser:" + ua_data[1].trim());
         flags_node = document.createElement("span");
-        flags_node.setAttribute("class", "post-icon");
+        flags_node.classList.add("post-icon");
+        flags_node.classList.add("flagger-gen");
         os_flag = this.gen_image_node(0, ua_data[0].trim());
         browser_flag = this.gen_image_node(1, ua_data[1].trim());
         if(os_flag) flags_node.appendChild(os_flag);
@@ -133,6 +136,87 @@ Flagger2ch.prototype.attachDOMObserver = function() {
   });
   observer.observe(targetNode, {childList: true});
   log("MutationObserver attached");
+};
+
+Flagger2ch.prototype.installSwitch = function() {
+  var attachPoint = undefined;
+  if(document.querySelector("ul#de-panel-btns")) {
+        attachPoint = document.querySelector("ul#de-panel-btns");
+    } else {
+        switchPanel = document.createElement("div");
+        switchPanel.setAttribute("class", "ua-flagger-panel");
+        switchPanel.setAttribute("style",
+"position: fixed;\
+ right: 0;\
+ bottom: 0;\
+ height: 25px;\
+ z-index: 9999;\
+ background-color: #777;\
+ border-radius: 15px 0px 0px;");
+        aList = document.createElement("ul");
+        aList.setAttribute("class", "ua-flagger-btns");
+        aList.setAttribute("style",
+"display: inline-block;\
+ padding: 0px 0px 0px 2px;\
+ margin: 0px;\
+ height: 25px;");
+        switchPanel.appendChild(aList);
+        document.body.appendChild(switchPanel);
+        attachPoint = aList;
+    }
+    var liButton = document.createElement("li");
+    liButton.setAttribute("id", "flagger-switch");
+    liButton.setAttribute("style", "width: 25px !important; height: 25px !important; display: inline-block; border: none !important; list-style-position: inside;");
+    liButton.appendChild(document.createElement("a"));
+    liButton.lastChild.classList.add("flagger-ua-visible");
+    liButton.lastChild.classList.add("de-abtn");
+    liButton.lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+this.flags_data.tech["ION"].replace(/\\/g,"")+"\")");
+    if(attachPoint.firstChild)
+        attachPoint.insertBefore(liButton, attachPoint.firstChild);
+    else
+        attachPoint.appendChild(liButton);
+    
+    liButton.addEventListener("click", flagger2ch.toggleVisibility);
+};
+
+Flagger2ch.prototype.loadVisibility = function() {
+    var mt;
+    var postList = document.querySelectorAll(".post-icon.flagger-gen");
+    if ((mt = document.cookie.match(/fl2ch\.disp\_fl\=(\d+)/i)) && (parseInt(mt[1])==0)) {
+        for (i = 0; i < postList.length; i++) {
+                    postList.item(i).setAttribute("style", "display: none");
+                }
+                document.querySelector("#flagger-switch").lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+flagger2ch.flags_data.tech["IOFF"].replace(/\\/g,"")+"\")");
+    }
+};
+
+Flagger2ch.prototype.toggleVisibility = function () {
+    var mt;
+    var postList = document.querySelectorAll(".post-icon.flagger-gen");
+    if (mt = document.cookie.match(/fl2ch\.disp\_fl\=(\d+)/i)) {
+        switch (parseInt(mt[1])) {
+            case 0:
+                for (i = 0; i < postList.length; i++) {
+                    postList.item(i).setAttribute("style", "display: inline-block");
+                }
+                document.cookie = document.cookie.replace("fl2ch.disp_fl=0", "fl2ch.disp_fl=1");
+                document.querySelector("#flagger-switch").lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+flagger2ch.flags_data.tech["ION"].replace(/\\/g,"")+"\")");
+                break;
+            default:
+                for (i = 0; i < postList.length; i++) {
+                    postList.item(i).setAttribute("style", "display: none");
+                }
+                document.cookie = document.cookie.replace(/fl2ch\.disp\_fl\=(\d+)/i, "fl2ch.disp_fl=0");
+                document.querySelector("#flagger-switch").lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+flagger2ch.flags_data.tech["IOFF"].replace(/\\/g,"")+"\")");
+                break;
+        }
+    } else {
+        for (i = 0; i < postList.length; i++) {
+            postList.item(i).setAttribute("style", "display: none");
+        }
+        document.cookie = "fl2ch.disp_fl=0;" + document.cookie;
+        document.querySelector("#flagger-switch").lastChild.setAttribute("style", "display: block; border: none !important; width: 25px; height: 25px; background-image: url(\"data:image/png;base64,"+flagger2ch.flags_data.tech["IOFF"].replace(/\\/g,"")+"\")");
+    }
 };
 
 Flagger2ch.prototype.flags_data = {
@@ -828,6 +912,24 @@ NqB4FXRuJIEHzWmGTqIybG8wy5beZwDyrmhzuZAUR1U9WbceRG8EuCCWSK7P9721\
 GEkcR8uJTnQ6wdnRR1ZMxQ03YwQK0IRIT0gZAZAhUD69Mx0fkaj+IsdKZwb86EXN\
 MwGZGloJyWqcA1i0SASD03mBO3b6IFKN+9XCVzTVeFc68B1L+a84AfvRgWpNxTaA\
 AAAAAElFTkSuQmCC"
+  },
+  tech: {
+      "ION":
+"iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAAGz7rX1AAAAGXRFWHRTb2Z0d2Fy\
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAO5JREFUeNpi/P//PwMyYGJAA8gC/9EF\
+GEEEQAAxIpvBBFMGopnQDWKE6QMIIGQ9/5EkwGwmLBJw2zAciOw2gABiRPcOTm8N\
+CgmAAMLl3P+41IMIFiyKGdFCCsMgJiwaCAImBuIBI7bkgQ/8J+QnfBrBmgACCGdk\
+4wIsJAQ12AJcQY3TPyQHMxMt44SsSCRJw39cwUpSbON0Cjl+wHDSf1KSBiOx1gAE\
+qKUMbgCAQRBYE/ZfmS5QjRDK04cQzlY+PkdKs6pqY0K1li4UgsvXpx43sB7gL/Au\
+cHa/2zEh1zRDOPWTJ8IVSUyYNIaSyNUFc6Y3ahgCm+gAAAAASUVORK5CYII=",
+      "IOFF":
+"iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAAGz7rX1AAAAGXRFWHRTb2Z0d2Fy\
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAOpJREFUeNpi/P//PwMyYGJAA4QFAAKI\
+EdkMkCyM958JXR8jTAtAACHr+Y8kAWYzYZFggLExrEdSzAAQQIzo3sHp6EEhARBA\
+uJz7H5d6EMGCRTEjWkhhGMSERQNBwMRAPGCE2Uaspv+E/IRPI1gTQADhjGxcgIWE\
+oAZbgCuocfqH5GBmomWckBWJJEcg0RpITiJwTaRo+I8ecf9JSRqMxFoDEGAkJz5y\
+AAsp0UAiYCTGkv+kBgsuR7FQ0XCikzrVLSArAw60JcihwIirsKIUIBv8n5zShKTs\
+jVyY0MISRlLyyX9qWsiCxyVUAwD3Yzld59QWVgAAAABJRU5ErkJggg=="
   }
 };
 
