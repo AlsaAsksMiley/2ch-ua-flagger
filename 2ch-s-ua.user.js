@@ -870,6 +870,6 @@ AAAAAElFTkSuQmCC"
 
 log("Script loaded");
 var flagger2ch = new Flagger2ch();
-flagger2ch.init();
+//flagger2ch.init();
 
 
