@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.4.2
+// @version     v1.5.0
 // @updateURL   https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.user.js
 // @grant       none
 // ==/UserScript==
@@ -200,15 +200,18 @@ Flagger2ch.prototype.attachDOMObserver = function () {
         mutations.forEach(function (mutation) {
             if (mutation.type === "childList") {
                 for (n = 0; n < mutation.addedNodes.length; n++) {
-                    //var classTest =/(post|post\-wrapper)/i.test(mutation.addedNodes.item(n).getAttribute("class"));
-                    var classTest;
+                    var classTest = undefined;
                     try {
-                        classTest = mutation.addedNodes.item(n).getElementsByClassName("post-details");
+                        if (/post\-details.*/.test(mutation.addedNodes.item(n).id)) {
+                            classTest = mutation.addedNodes.item(n);
+                        } else {
+                            classTest = mutation.addedNodes.item(n).querySelector(".post-details");
+                        }
                     } catch (e) {
                         classTest = undefined;
                     }
                     if (classTest) {
-                        flagger2ch.patch_post(classTest[0]);
+                        flagger2ch.patch_post(classTest);
                     }
                 }
             }
