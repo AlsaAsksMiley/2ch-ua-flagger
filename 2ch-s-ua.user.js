@@ -10,7 +10,6 @@
 // @updateURL   https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.user.js
 // @grant       none
 // ==/UserScript==
-
 function log(content) {
     console.log("[MessageFlagsUserscript]: " + content.toString());
 }
