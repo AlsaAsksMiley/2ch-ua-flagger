@@ -17,7 +17,9 @@ Flagger2ch = function () {
     this.os_list = {
         "Microsoft Windows 95": "Windows9X",
         "Microsoft Windows 98": "Windows9X",
+        "Microsoft Windows 2000": "Windows9X",
         "Microsoft Windows XP": "WindowsXP",
+        "Microsoft Windows Server 2003": "WindowsXP",
         "Microsoft Windows Vista": "WindowsVista",
         "Microsoft Windows 7": "Windows7",
         "Microsoft Windows 8": "Windows8",
@@ -102,7 +104,11 @@ background-image: url(\"data:image/png;base64,"
 Flagger2ch.prototype.init = function () {
     this.patch_posts();
     this.attachDOMObserver();
-    this.installSwitch();
+    document.onreadystatechange = function () {
+        if (document.readyState === "complete") {
+            flagger2ch.installSwitch();
+        }
+    };
     log("Flagger initialized");
 };
 
@@ -180,6 +186,8 @@ Flagger2ch.prototype.patch_post = function (post) {
                 .removeChild(
                         (post.querySelector(".ananimas") || post.querySelector(".post-email"))
                         .querySelector("span"));
+        (post.querySelector(".ananimas") || post.querySelector(".post-email"))
+                .innerHTML = (post.querySelector(".ananimas") || post.querySelector(".post-email")).innerHTML.trim().replace(/\&nbsp\;/ig, "");
     }
 };
 
@@ -976,8 +984,4 @@ euk/3kqDFoCJUNlEoW8YiEkpAxLxJEc6vpL6PzV9x0Sqq/CVx1j4eIMLoyAh4Ij/\
 
 log("Script loaded");
 var flagger2ch = new Flagger2ch();
-document.onreadystatechange = function () {
-    if (document.readyState === "complete") {
-        flagger2ch.init();
-    }
-};
+flagger2ch.init();
