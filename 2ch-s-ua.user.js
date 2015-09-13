@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.4
+// @version     v1.4.1
 // @grant       none
 // ==/UserScript==
 
@@ -36,7 +36,8 @@ Flagger2ch = function () {
         "Apple GayPad": "IOS",
         "Apple GayPhone": "IOS",
         "Haiku": "Haiku",
-        "Google Android": "Android"
+        "Google Android": "Android",
+        "OS/2": "OS2"
     };
     this.browser_list = {
         "Firefox based": "Firefox",
@@ -268,6 +269,24 @@ Flagger2ch.prototype.toggleVisibility = function () {
 
 Flagger2ch.prototype.flags_data = {
     os: {
+        "OS2":
+"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAArxJREFUeNpiFKt0ZwCClwxAxhcg4z9A\
+ADECGVZAxjEGLgvF/8wCnP8BAggkZQGSgmEmIHECpIuRgxVEMQAEECPUlItAfBCI\
+8xiQlQMlf4G0MIgWOjGwKQgzfD/ziJWBx0UDWUUTQADBzNj7qmOXE8P//wwwAFTI\
+wGUqz8ECZD/4uP6iPJe5Alji24n7DMKZdgxMYCmGHyA79vJ5aoEluS0VGYQSLRne\
+Tj8Eduaf118YQAqSgRx2Hke1Hx9WnmX4sOocA7e1Mkh9E4soDyNAAMHcAALTgTgI\
+iJ8CcRoQnwEJgizi+Xbywecv+27CFIoxMjOdFi1z3QRk+zMIxpn/R/Y8OEg5WP8z\
+sjKDvKnDwiLCAw4IGHjdv48BGMrggAGCVUwwiS/7bzH8evAW7Is/Lz4xcBrKgoSF\
+mf7/+8fw78cfBqAvwF77evw+A7uGBMPfD99ACpayMHGyTXo1YWceAxpgkxNkYFAQ\
+LmLmtlXZAcQ8///8s/r7/hsDizgvg0i2/VdWKX5OkIMBAowFKRy4gbgPiFM+77jG\
+9PvpB4Z/X36CJZh4ORhYZQUYeF01fwO5U4G4Aoh/IieI2cA4SgF5hBgAjeheILME\
+FNCzfz96n8JpIAMPDYFIEwZWCT6wh0GRDwLARMrAxAlJhpy6Ugy/Hr0rZpMT+gcK\
+xkiQv0DhCzIEpBCm+eeNF3DNrJJ8YMNB4fBp+zUGVnE+kFQyyIAPyIkclKK+X3gC\
+jgtQsgNp5tCUYAAmSbA8O5DNaSjD8GEFOKncAYWBEZBx+uPGi0y/7r1l+P/jNwML\
+0AXMAlxAQz4y8AcaMLybfxysGZQCQHEITCYM3DbKf4BCOiAXnAO5kt9ffxNQECwJ\
+sh3k/L8fvsM1g3Pbr78MzHwcIM3LgFwOIL6JnJxhQA+Io4DYAYgVoAn0HhDvA6Uc\
+IL6BrBgA217uJvXBdNMAAAAASUVORK5CYII=",
         "Android":
                 "iVBORw0KGgoAAAANSUhEUgAAAA0AAAAQCAYAAAG6pMWvAAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAsJJREFUeNpiXLnJl4FZ/KUUy2+RN99+\
