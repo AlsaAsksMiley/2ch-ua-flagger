@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.5.0
+// @version     v1.5.1
 // @updateURL   https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.user.js
 // @grant       none
 // ==/UserScript==
