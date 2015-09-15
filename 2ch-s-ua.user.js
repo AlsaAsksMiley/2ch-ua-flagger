@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.5.2
+// @version     v1.5.3
 // @downloadURL https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.user.js
 // @updateURL   https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.meta.js
 // @grant       none
@@ -55,13 +55,13 @@ Flagger2ch = function () {
         "Mobile Safari": "Safari",
         "W3M": "W3M",
         "Lynx": "Lynx",
-        "Web+": "WebPlus"
+        "Web+": "WebPlus",
+        "UCBrowser": "UCBrowser"
     };
     this.showIcons = this.checkConfig();
     this.cssData =
             ".icons-inv {\n\
 display: none;}\n\
-\n\
 .flagger-gen img {\n\
 vertical-align: -3px;\
 }\
@@ -73,37 +73,31 @@ height: 25px;\n\
 z-index: 9999;\n\
 background-color: #777;\n\
 border-radius: 10px 0px 0px;}\n\
-\n\
 .ua-flagger-btns {\n\
 display: inline-block;\n\
 padding: 0px 0px 0px 2px;\n\
 margin: 0px;\n\
 height: 25px;}\n\
-\n\
 #flagger-switch {\n\
 width: 25px !important;\n\
 height: 25px !important;\n\
 display: inline-block;\n\
 border: none !important;\n\
 list-style-position: inside;}\n\
-\n\
 .flagger-ua-a {\n\
 display: block;\n\
 border: none !important;\n\
 width: 25px !important;\n\
 height: 25px !important;\n\
 }\n\
-\n\
 #flagger-switch a, #flagger-switch a:hover {\n\
 background-image: url(\"data:image/png;base64,"
             + this.flags_data.tech["ION"].replace(/\\/g, "")
             + "\");}\
-\n\
 #flagger-switch.off a {\n\
 background-image: url(\"data:image/png;base64,"
             + this.flags_data.tech["IOFF"].replace(/\\/g, "")
-            + "\");}\n\
-";
+            + "\");}";
 };
 
 Flagger2ch.prototype.init = function () {
@@ -984,7 +978,32 @@ AKVUgQnDIBAM2SArpCN0FlfICmaEOkJcISPEFVyhqzQUFM7jNLZ5eFB88P7v7r9I\
 NqB4FXRuJIEHzWmGTqIybG8wy5beZwDyrmhzuZAUR1U9WbceRG8EuCCWSK7P9721\
 GEkcR8uJTnQ6wdnRR1ZMxQ03YwQK0IRIT0gZAZAhUD69Mx0fkaj+IsdKZwb86EXN\
 MwGZGloJyWqcA1i0SASD03mBO3b6IFKN+9XCVzTVeFc68B1L+a84AfvRgWpNxTaA\
-AAAAAElFTkSuQmCC"
+AAAAAElFTkSuQmCC",
+        "UCBrowser":
+"iVBORw0KGgoAAAANSUhEUgAAABUAAAAQCAYAAAGO3QSzAAAAGXRFWHRTb2Z0d2Fy\
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/pJREFUeNpi/HT8AiPr68///95//pKF\
++fZDZiZllT9M4qLiAAHE+H3dQYb/f38zMEtK8rEwsLD9ZxYXYWTk4/0EEAAyAM3/\
+Afewxdf93eMoAQwKAAEHBgAACwgABSgiDgT29e8pCh0a/wMnIAH/9fQAAAMCAP8A\
+AAACiPHH/vMM/798Y2D484fh/5/f7P8/fDvIwvDj7/9/T98wMHJzMjAwMgItEmdg\
+YmBhYWBWU8jijHRmZFaVZWQU4GFk+nv7IQOTsOCW31efMsAAQAAuyB0FYSgKonPz\
+PhpNSBUkdkIKK7s01rZuy1WInbgBV+GnsQiIoiBYWFkYMO/F5PrAzmlPMWeGivn6\
+JJI4RVFk3PCUSzPh52vclAa1qaBCZxd0obLRXVLUWZDWMya5JV85EID6PaCldqTl\
+CkIs8akf0AJk8zOq/ZXJczrDgcfGss5S2M0RkOLXX9WgKIT3zi8gKSovicHk5rpD\
+7OEGtH385ysAm9SS0kAQRF9V98w4GZg4iKDixqXiGTyDJ/ECHsBjxIUHUMjevTtF\
+gztBED/xE6NJx/Sky5pWQcQHTdNQn/dpqi+uFmePw354GgBM6l4CGbk4NTwPu/I+\
+2TSrSwfWX948UJHuYepPZeq3ZuOPbS1cETcBF62febvkuidq4h20CJQm0UgkVm/E\
+bJrDVfvQ0pw+qjbYmJgLElWap69k7ZE27GvjcSPKihv3NJINzarmhbJl1pZ9uH+B\
+qKcNZwSJy5ky05HBG3i+PKMs9xDBf2B3fdsTXyshXodyDP0RGq/+wpoiOzdlBeTZ\
+juhX+Vb5JeoXPgVonGpaEgjC8Mw4q62G5poZklBCh1Cii4fu/Y/+QHeP/YP+QWBf\
+h+japY5RBBEUQtQ5yUNYhrLruuvM9Mys1cWihWXZ3Xfe9/l6abdxum3nclso3KMJ\
+XpedD2H+xMFcCHMApmRU31sG7poc+BU5DGpSyHjMD9eQFYCBEJZFYgsFwlfKh9Td\
+P3tmTrZEYLuR1PN+ECip4RPDUaPRgISMlNSftPS4qX5P2tAE0XCyu5wvFR9U3y8Z\
+5dCY2knjuvEokhH9WJQrPQSIzBBdq5sx1kFIr2HTAQpPSAK76F7d1pOr1Q3Q5ayQ\
+QxjHWsFbyPFILd5kczM3LJ+5F63OE8LR1g0NCA1XG6Vt1AzGpvHkeqUpu94RFXKT\
+DAMkKiAs79wyJ11TYWiG0EwK1KaJeHmLUCr13WCi9VZpnrBM6ly2X4l0PaMltaxF\
+PGephUTaNlE9n8j+INL0HxfvXtwROpKtKQbB48g39hBr1wN996tIhZKI1juaaq1B\
+U4zIXxN4ulwEG3WpAtqgqVQVxceEsx1QlxNPaNNo5P5vfT8By3tvjkkGJOwAAAAA\
+SUVORK5CYII="
     },
     tech: {
         "ION":
