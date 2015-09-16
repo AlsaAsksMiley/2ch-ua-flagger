@@ -22,7 +22,7 @@ function testInput(t) {
             if(qs('#icon-input-os').files[0] && (qs("#os-code").value.length > 0) && (qs("#os-name").value.length > 0)) {
                 encodeIcon(0);
                 qs("#code-os").setAttribute("value", "\"" + qs("#os-name").value + "\": \"" + qs("#os-code").value + "\"");
-                qs("#os-base64").value = "\n\"" + qs("#os-code").value + "\": \"";
+                qs("#os-base64").value = qs("#os-code").value + "\":\n\"";
                 qs("#os-preview").classList.add("active");
             } else {
                 qs("#code-os").setAttribute("value", "");
@@ -35,7 +35,7 @@ function testInput(t) {
             if(qs('#icon-input-br').files[0] && (qs("#br-code").value.length > 0) && (qs("#br-name").value.length > 0)) {
                 encodeIcon(1);
                 qs("#code-br").setAttribute("value", "\"" + qs("#br-name").value + "\": \"" + qs("#br-code").value + "\"");
-                qs("#br-base64").value = "\n\"" + qs("#br-code").value + "\": \"";
+                qs("#br-base64").value = qs("#br-code").value + "\":\n\"";
                 qs("#br-preview").classList.add("active");
             } else {
                 qs("#code-br").setAttribute("value", "");
