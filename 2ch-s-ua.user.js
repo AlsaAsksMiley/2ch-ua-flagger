@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.5.4
+// @version     v1.5.5
 // @downloadURL https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.user.js
 // @updateURL   https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.meta.js
 // @grant       none
@@ -225,8 +225,8 @@ Flagger2ch.prototype.installSwitch = function () {
     styleData.innerHTML = this.cssData;
     document.head.appendChild(styleData);
     var attachPoint = undefined;
-    if (document.querySelector("ul#de-panel-btns")) {
-        attachPoint = document.querySelector("ul#de-panel-btns");
+    if (document.getElementById("de-panel-btns") || document.getElementById("de-panel-buttons")) {
+        attachPoint = document.getElementById("de-panel-btns") || document.getElementById("de-panel-buttons");
     } else {
         switchPanel = document.createElement("div");
         switchPanel.setAttribute("class", "ua-flagger-panel");
