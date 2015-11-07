@@ -5,7 +5,7 @@
 // @description    Adds OS and browser flags to messages on 2ch.hk
 // @description:ru Добавляет флаги ОС и браузера в сообщения на 2ch.hk
 // @include      /^https?:\/\/2ch\.(hk|pm|re|tf|wf|yt)\/s/
-// @version     v1.5.5
+// @version     v1.6.1
 // @downloadURL https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.user.js
 // @updateURL   https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.meta.js
 // @grant       none
@@ -32,6 +32,7 @@ Flagger2ch = function () {
         "Ubuntu Linux": "UbuntuLinux",
         "Arch Linux": "ArchLinux",
         "Fedora Linux": "FedoraLinux",
+        "CentOS Linux": "CentOS",
         "BSD": "FreeBSD",
         "Apple Mac": "OSXMavericks",
         "Apple GayPad": "IOS",
@@ -102,7 +103,7 @@ background-image: url(\"data:image/png;base64,"
 };
 
 Flagger2ch.prototype.init = function () {
-    this.patch_posts();
+    this.patch_posts(document);
     this.attachDOMObserver();
     document.onreadystatechange = function () {
         if (document.readyState === "complete") {
@@ -147,8 +148,8 @@ Flagger2ch.prototype.gen_image_node = function (type, value) {
     return img_node;
 };
 
-Flagger2ch.prototype.patch_posts = function () {
-    var thread_posts = document.querySelectorAll(".post-details");
+Flagger2ch.prototype.patch_posts = function (target) {
+    var thread_posts = target.querySelectorAll(".post-details");
     for (post = 0; post < thread_posts.length; post++) {
         this.patch_post(thread_posts.item(post));
     }
@@ -193,17 +194,24 @@ Flagger2ch.prototype.patch_post = function (post) {
 
 Flagger2ch.prototype.attachDOMObserver = function () {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-    var targetNode = document.querySelector(".thread").parentNode;
+    //var targetNode = document.querySelector(".thread").parentNode;
+    var targetNode = document.querySelector(".posts");
     var observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
             if (mutation.type === "childList") {
                 for (n = 0; n < mutation.addedNodes.length; n++) {
+                    if(mutation.addedNodes.item(n).tagName === "FORM") {
+                        log("Added new form");
+                    }
                     var classTest = undefined;
                     try {
                         if (/post\-details.*/.test(mutation.addedNodes.item(n).id)) {
+                            // Работает в треде
                             classTest = mutation.addedNodes.item(n);
                         } else {
-                            classTest = mutation.addedNodes.item(n).querySelector(".post-details");
+                            // Работает в списке тредов
+                            classTest = undefined;
+                            flagger2ch.patch_posts(mutation.addedNodes.item(n));
                         }
                     } catch (e) {
                         classTest = undefined;
@@ -271,6 +279,29 @@ Flagger2ch.prototype.toggleVisibility = function () {
 
 Flagger2ch.prototype.flags_data = {
     os: {
+        "CentOS":
+"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA6NJREFUeNpi+P//P8OXM703GHbVrLn7\
+/9+XeoAAYgSJgADL5Ni5/3kMPzAABBBYZMq96P+ee9QZHjzXZWACSf/dGM3w2OkF\
+g75yMwNAADGAVACxEpRmYNj6YuL7/Gta/9ekzAHy/8sxLsxc9F9ERYLhyd+rDHOW\
+v2JgyM+Z+1lDruz/m2XmIBXKAAEEtuXQm8UPv/55x3fv41GBoGsGDPefmvx5eObO\
+18gFWYYgW5XvfTghd+znfAFeUSkGVkFlhj+vv7G8Pnyff/2GU3tYgAru/tzt9+Pt\
+BX2O35yCDBLZexnMLH4xqEvuYRAP6E6COVMR5NQrP7bcTz8nBbLbCWQ/ELMCBBBM\
+ARh/Od13AUjrIIuBHCk29W7CLU0+G065xzfYzvRLM8hZ6Hz4/+//D+tcN0mQI/+K\
+sMvwP/p2ke0H20+GK+vvMTw4fEuA8S8DHyjYmO5uuXHo5J/FDDz83AwC3NoMNqmO\
+DN/uv2V4dPoeF1Bel1lo+++p0s9jGL7tFGIw8k3oecl83+qjxAeG71IcDNt3PfAB\
+ucFIQiTprJe3EYNB/BeGjP/vGL4z/GRgEVT6w22Uzwpyw1MRYX6GO3deMvz4+p/h\
+z+PdDKxCwMB6e+UfOGqBJjBD/Wxdc93w/563i15Aow8UNgwAAQbzLxMQiwKxOMjb\
+QKz3/9b2a69mKP9/u8zo/79nG+8DxUyhcjA1zLBwAlkkPvVe/N1DrxdxB0lXM+x/\
+PYfhDcM7hhrWFAa+EzIM01IfMHBy/mOwLnRj2Ne2iUHTw/B34vZiLaC+OywMECCs\
+zefI9OT7eQYmYADaikYwMLPxMXC8+MzAwPyLwTLDiYGD7R8wPTIzyJuoMGj7GYH1\
+gAxgPDJh55Uzsw9rq+cqMPzi+sjw799fBuZ/7AxiUnIMuu6205je8X3buuZ4ye1r\
+Txj+fP/DwMTMxMDCzcowZ90hhpgY+9sgL+heXn5sw4TtZ5TWbDrLwMfHyRAQZM7w\
+9cNfBu8sPgY1ufcM2tcvMvznYGf4cXsjA8Ovdww/RFwZ9v+tehYSbBgE8sJl3Ugr\
+U/OPX+6qqMsIPH3yjkGIh4vh4tHbDLdfvGQQ5L/H8OXOKQZGTT+G/zJeDMwCKgxc\
+bDzfQnQMLYB6HzNBw4CFk4vz5907L79rasl+l5UT+a+iK8AgIMjK8IddkOGPoikD\
+M580A6uY3vc/b69+///vz0+gHlZYPGPF//7/09n0vPXq4oeFd/78+2WGSx0A8/r7\
+BDg6FqsAAAAASUVORK5CYII=",
         "OS2":
 "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
 ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAArxJREFUeNpiFKt0ZwCClwxAxhcg4z9A\
