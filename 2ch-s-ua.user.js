@@ -64,6 +64,7 @@ Flagger2ch = function () {
         "Web+": "WebPositive",
         "UCBrowser": "UCBrowser",
         "UC Browser": "UCBrowser",
+        "Palemoon": "Palemoon",
         "QupZilla": "Qupzilla",
         "SeaMonkey": "SeaMonkey",
         "Midori": "Midori",
@@ -1332,7 +1333,32 @@ YGcmKB4p4lhQvsyVzqLQMCuTnIH3gx/wWyFmsg6aGp2jS8idsdVZG2ByzkV/LUYt\
 K9FuRhCjGmK+NaQfiWVlmrcWGnM5W2nwvS4CbwdVgt3Ia7CzGkpHM5iZYqgwAZ2P\
 YXfmsP5riA8b63dTqxmxzWeMdw+uXF28fvosoTOw2vyJZysr+N5p4eAhIH+AQ08c\
 5EUZ3363d71ueJ7gfU4fsCgdDjksleT9RFywTX6zPjV9fLpYKjPGsNvrRpuet+n3\
-omXO9FfkfC8aCYyFxB5zW2tbvCDSiAAAAABJRU5ErkJggg=="
+omXO9FfkfC8aCYyFxB5zW2tbvCDSiAAAAABJRU5ErkJggg==",
+        "Palemoon":
+"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAGXRFWHRTb2Z0d2Fy\
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/VJREFUeNpiUPHpZOhccf0m0++312/r\
+q4irAQQQo4Z/jwYDI9MNhtDq7f9XHnr6HyAAACIA3f8AIkiCJDVfo//H1+7/9vn8\
+/wQCBQncIhoLAM/lCAC91OwAAogRZIqSuu5+Kw3eg0s3HW9g+fH+8X8jXT+GSGcZ\
+By4B8TKmH9++MPz+xcjw+y8Dw8GzLzmZeFh/MAgLCTDsvvaP4dWz200AAQCEAHv/\
+ASRMiQAB+/OkAAkZW0hHPwB6VyMADgoFAAUFAwAmTIkEBPXr3cEVFBM+Oj0wAO/x\
++ADb5fUA6fD6AOTs9wBjXlL8AgkKC8Ly7ugA7u7wAAwJBADL4QMA6fYOAO31BgDW\
+3OoAAgILGH0EEiUE0MzG9fr6+wDz8/QA4uXpALm6vITLycYBApA4x7wQgwEcxv99\
+257Tt9X22rgykUgNEoNFYtHLjSYjkUhsEp8Bia9gtFlMNptzCYlRYpBcGYSQc46c\
+Ur322rev4gv8nuf/QRBAqbZbry2sOCPCc+PiavOh/e5nGQMBIEpIOVHsnfqc424s\
+TddO9tdbW6veIc85yHfnNiTiECqGibJM8Njto/c1gDfvrhmGPiXFcb/sTjowqypa\
+TyG8WRvHl+2/rGqOHhBCBLx0XsE4EKcyGCOYqCo4v+6CpWxcoqUcYh6hkBBlMpp+\
+jmQgwdJV3ITBEZG0sb0kCmCZOuyKhl+Rc15IGT56b9uiNbPcDD8DUSjpiwqlSJIU\
+/t191Dg7HS76/EeAosmlxYkgisKn09VdnXQlTsxjBGUwgpr4WgoiyIgL1y6djZv5\
+B+4NzN4/4A9wEFwLgvjCnQ6IjA6MMIKa7nRPTEicrn5VV3uNC6sWtah7i3u+c2rJ\
+4d8qK45lPqiJlfuOaIl+v4frFzu4sCaw2nSW/vyWydGjp+8fPnn2YavQStMDMFvn\
+byOX02Ehp6/Sgq1nqNlus4N+r4MrpwU1MqhCwzINHG9w+9bV3vq9O9eG3kSWu/s/\
+35juiUtb6Xw85NxB78xZDAbn0DzWoDQwWMxYzrbiWhhNEhyMI3jTlDin2B2bN5XS\
+Bivi2d1ckSPkmcuJZVnAKDPSygkEsNapwrHp0igxlwpyluLdlxlGYQSZlBsVzm2f\
+mRpxnCAIf0FKCaWpnra/sPDys8LOARBnLuaRiW9BDkaURSUDMwq/YtZPbdYclnJD\
+UrAXUEqBmSaEqFI8BCySFkYl9sIc89wGrzaw2m0jzbMkCLxNwsj3WfsyVTa2J6GH\
+eHEIRhNbjEGThizPEScpYpngKErw/YeH5y9eb3/6uFMvdfH1v42knb40HcWg6jY2\
+Wu3ujW63fbIu3L/yRkF4+Hbs+4+zLNkzCFip9bLtDwKnrAkwTpVpAAAAAElFTkSu\
+QmCC"
     },
     tech: {
         "ION":
