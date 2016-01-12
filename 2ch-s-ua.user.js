@@ -8,7 +8,7 @@
 // @include      http://2ch.pm/s/*
 // @include      https://2ch.hk/s/*
 // @include      https://2ch.pm/s/*
-// @version     v1.6.6
+// @version     v1.6.7
 // @downloadURL https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.user.js
 // @updateURL   https://github.com/AlsaAsksMiley/2ch-ua-flagger/raw/master/2ch-s-ua.meta.js
 // @grant       none
@@ -75,7 +75,8 @@ Flagger2ch = function () {
         "Спутник": "Sputnik",
         "Links": "Links",
         "ELinks": "ELinks",
-        "K-Meleon": "KMeleon"
+        "K-Meleon": "KMeleon",
+        "Амиго": "Amigo"
     };
     this.showIcons = this.checkConfig();
     this.cssData =
@@ -1357,7 +1358,28 @@ mRpxnCAIf0FKCaWpnra/sPDys8LOARBnLuaRiW9BDkaURSUDMwq/YtZPbdYclnJD\
 UrAXUEqBmSaEqFI8BCySFkYl9sIc89wGrzaw2m0jzbMkCLxNwsj3WfsyVTa2J6GH\
 eHEIRhNbjEGThizPEScpYpngKErw/YeH5y9eb3/6uFMvdfH1v42knb40HcWg6jY2\
 Wu3ujW63fbIu3L/yRkF4+Hbs+4+zLNkzCFip9bLtDwKnrAkwTpVpAAAAAElFTkSu\
-QmCC"
+QmCC",
+        "Amigo":
+"iVBORw0KGgoAAAANSUhEUgAAABEAAAAQCAYAAAGHNqTJAAAAGXRFWHRTb2Z0d2Fy\
+ZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA1hJREFUeNpiYAACryMMtxjQAUAAMRg2\
+M7SAaEavQwz/f31kYAAIILCokC6Dss5mhu0Gcxn2gPhMIEKnguHOl3MM6rxMDM4g\
+PkAAgZHbTobrfJoMCnCB8AcM//3OM/wHsZmZ2BkYvigwuPByMYi9uMpwlNFhJcP/\
++9cY7jICbZRVYFACCCBGmDazcwyvFIQZRP//Y2D495uBYZ0pA+f/jww/4LaDgPBn\
+hm8/fzEwrFZkYPz9hYHBczvDd5gc2CSDOoYlQoYM0UwsDF+B2v7/+8nA+vcXA/un\
+twxPz2czyDDKhzIUSrsx9D25w3D9USeDFky3/iSGT1xMDLyffzD8AQggsAArHwOX\
+80aGA4FXGR6ZTWKYgRxmYKs45BmknXczPODmZGD5/ZWB4c1dhvOHvRmM4A7+8ZDh\
+Kfs/hh/vvzJ8YwaKCEszGMJMACvglGDg//uTgefMHIa+5xcYDv/8wMAgncpQC7fH\
+diHDUZ9jwKAEKudSZ1Bz28Hw32EzJGhZQAS7CIPV99cMDC6bGT4z/AWG22eg4B8g\
+FmAQYFaOY6jlkmRwfPaE4e3rBwzv3z1j+M7OwcDJ8JOBhVWSQZ3RZj7Df2BAMRyK\
+Z2Bn+MfwC2ysPIOmRTXDtf9AUwAC1FHtIAlFYfi7airmI7AUAgstRMheDi0RNoQO\
+EUEE0RC1hENDQltztTVVi7UHQdBQErWXVL4KbQgqoaGIEI2bz+PtPwWpRQfOcM7h\
+//heHKFWs9YKizeIJCWqleiF58SZCMRNfMFTaAnj6TNEfvdLXnsoihBvjxEwD6DX\
+YEEHFyYRA4lilgnQt0/Al07jUbxBvHZOVgdZAuufgd/ogIdRCRLXiASn0VcuIMdp\
+M7Kx24dtlbMa7x8mZM5c5yzWGTX+NQfpyo+x8gVi1Lx8iwueUpYGGOQaB4aeT7FD\
+rlbqQEyDcHct4qBEAIz8uNvHaiWMQ7UJzR8pxHR2DDeo0MqrodHDzPQwZS5x9NMf\
+nQ021wrplEEr0I1CSQ+KKkNusMQIvECbZ8q+vYpvYer9HHuCyghDzzJCqiY4OIBI\
+A9E1eKV7nPB+1qjNt81j0+rGQpEXpPIFXnxLISEYRhGQa2DntgpKNGaT2C1FsYF/\
+ltKJSdMI1hVqmOm3SGceEP4EYfwRVablEgsAAAAASUVORK5CYII="
     },
     tech: {
         "ION":
